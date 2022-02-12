@@ -8,3 +8,55 @@
  * Custom here your css module
  *
  */
+
+ .text {
+     margin-top: 5px;
+     margin-bottom: -5px;
+ }
+
+ .progress-outer {
+     width: 100%;
+     height: 2px;
+     background-color: #999;
+     clear: both;
+ }
+
+ .progress-inner {
+     height: 2px;
+     background-color: white;
+ }
+
+ .progress-title {
+     float: left;
+ }
+
+ .progress-percentage {
+     margin-left: 10px;
+     margin-top: 5px;
+     width: 60px;
+     text-align: right;
+     float: right;
+     font-size: smaller;
+ }
+
+ .progress-links {
+     margin-left: 10px;
+     margin-top: 5px;
+     width: 40px;
+     text-align: right;
+     float: right;
+     font-size: smaller;
+ }
+
+ .progress-speed {
+     margin-left: 10px;
+     margin-top: 5px;
+     width: 90px;
+     text-align: right;
+     float: right;
+     font-size: smaller;
+ }
+
+ .progress-header-wrapper {
+     margin-top: 5px;
+ }

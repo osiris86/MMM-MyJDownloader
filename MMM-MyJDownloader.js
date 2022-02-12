@@ -13,6 +13,45 @@ Module.register("MMM-MyJDownloader", {
 		retryDelay: 5000
 	},
 
+	downloads: {
+		packagesDone: 4,
+		speed: '1.250 kb/s',
+		totalBytes: 123555,
+		downloadedBytes: 83833,
+		runningDownloads: [{
+			name: "Dexter New Blood S01E07 German DL 720p WEB h264-OHD",
+			totalLinks: 2,
+			downloadedLinks: 1,
+			totalBytes: 711,
+			downloadedBytes: 210,
+			speed: '30 kb/s'
+		}, {
+			name: "Dexter New Blood S01E08 German DL 720p WEB h264-OHD",
+			totalLinks: 2,
+			downloadedLinks: 0,
+			totalBytes: 711,
+			downloadedBytes: 10,
+			speed: '240 kb/s'
+		}, {
+			name: "S02E01 KTr94oze74Q65hj8V6l93dyg9bxSJubo7759KOLde6425Be",
+			totalLinks: 4,
+			downloadedLinks: 0,
+			totalBytes: 711,
+			downloadedBytes: 0,
+			speed: '240 kb/s'
+		}, {
+			name: "S02E02 LRn02noq55T85ck7K6n39dbr2ieSJhvg4325UOQbb4056k",
+			totalLinks: 4,
+			downloadedLinks: 0,
+			totalBytes: 711,
+			downloadedBytes: 0,
+			speed: '240 kb/s'
+		}],
+		packagesWaiting: 10
+	},
+
+	requiresVersion: "2.1.0", // Required version of MagicMirror
+
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	start: function() {
@@ -28,6 +67,10 @@ Module.register("MMM-MyJDownloader", {
 		setInterval(function() {
 			self.updateDom();
 		}, this.config.updateInterval);
+	},
+	 
+	getHeader: function() {
+		return "JDownloader@mschmidt"
 	},
 
 	/*
@@ -88,9 +131,9 @@ Module.register("MMM-MyJDownloader", {
 		var self = this;
 
 		// create element wrapper for show into the module
-		var wrapper = document.createElement("div");
+		var wrapper = this.getDownloadsDom()
 		// If this.dataRequest is not empty
-		if (this.dataRequest) {
+		/*if (this.dataRequest) {
 			var wrapperDataRequest = document.createElement("div");
 			// check format https://jsonplaceholder.typicode.com/posts/1
 			wrapperDataRequest.innerHTML = this.dataRequest.title;
@@ -112,8 +155,88 @@ Module.register("MMM-MyJDownloader", {
 			wrapperDataNotification.innerHTML =  this.translate("UPDATE") + ": " + this.dataNotification.date;
 
 			wrapper.appendChild(wrapperDataNotification);
-		}
+		}*/
 		return wrapper;
+	},
+
+	getDownloadsDom: function() {
+		const wrapper = document.createElement('div')
+		const totalDownloads = this.getProgressDom('Total', this.downloads.totalBytes, this.downloads.downloadedBytes, this.downloads.speed)
+		wrapper.appendChild(totalDownloads)
+
+		wrapper.appendChild(this.createText('Finished Packages: ' + this.downloads.packagesDone))
+
+		for (const download of this.downloads.runningDownloads) {
+			const downloadDom = this.getProgressDom(download.name, download.totalBytes, download.downloadedBytes, download.speed, download.totalLinks, download.downloadedLinks)
+			wrapper.appendChild(downloadDom)
+		}
+
+		wrapper.appendChild(this.createText(this.downloads.packagesWaiting + ' more packages waiting'))
+
+		return wrapper
+	},
+
+	createText: function(text) {
+		const wrapper = document.createElement('div')
+		wrapper.className = 'text'
+		wrapper.innerHTML = text
+		return wrapper
+	},
+
+	getProgressDom: function(titleText, totalBytes, downloadedBytes, speed, totalLinks, downloadedLinks) {
+		let wrapper = document.createElement('div')
+
+		let percent = 100 / totalBytes * downloadedBytes
+
+		wrapper.appendChild(this.getProgressHeader(titleText, percent, speed, totalLinks, downloadedLinks))
+		wrapper.appendChild(this.getProgressBar(percent))
+		return wrapper
+	},
+
+	getProgressHeader: function(titleText, percent, speed, totalLinks, downloadedLinks) {
+		let headerWrapper = document.createElement('div')
+		headerWrapper.className = 'progress-header-wrapper'
+
+		let title = document.createElement('div')
+		title.className = 'progress-title'
+		if (titleText.length > 30) {
+			titleText = titleText.substring(0, 30) + "..."
+		}
+		title.innerHTML = titleText
+		 
+		let percentage = document.createElement('div')
+		percentage.className = 'progress-percentage'
+		percentage.innerHTML = parseFloat(percent).toFixed(2) + '%'
+
+		headerWrapper.appendChild(title)
+		headerWrapper.appendChild(percentage)
+
+		if (speed) {
+			const speedWrapper = document.createElement('div')
+			speedWrapper.innerHTML = speed
+			speedWrapper.className = 'progress-speed'
+			headerWrapper.appendChild(speedWrapper)
+		}
+
+		if (totalLinks) {
+			const linksText = speed ? (downloadedLinks + '/' + totalLinks) : totalLinks
+			const links = document.createElement('div')
+			links.innerHTML = linksText
+			links.className = 'progress-links'
+			headerWrapper.appendChild(links)
+		}
+
+		return headerWrapper
+	},
+
+	getProgressBar: function(percent) {
+		let progress = document.createElement('div')
+		progress.className = 'progress-outer'
+		let progressBar = document.createElement('div')
+		progressBar.className = 'progress-inner'
+		progressBar.style.width = percent + '%'
+		progress.appendChild(progressBar)
+		return progress
 	},
 
 	getScripts: function() {
