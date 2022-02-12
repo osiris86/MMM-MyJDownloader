@@ -13,60 +13,13 @@ Module.register("MMM-MyJDownloader", {
 		retryDelay: 5000
 	},
 
-	downloads: {
-		packagesDone: 4,
-		speed: '1.250 kb/s',
-		totalBytes: 123555,
-		downloadedBytes: 83833,
-		runningDownloads: [{
-			name: "Dexter New Blood S01E07 German DL 720p WEB h264-OHD",
-			totalLinks: 2,
-			downloadedLinks: 1,
-			totalBytes: 711,
-			downloadedBytes: 210,
-			speed: '30 kb/s'
-		}, {
-			name: "Dexter New Blood S01E08 German DL 720p WEB h264-OHD",
-			totalLinks: 2,
-			downloadedLinks: 0,
-			totalBytes: 711,
-			downloadedBytes: 10,
-			speed: '240 kb/s'
-		}, {
-			name: "S02E01 KTr94oze74Q65hj8V6l93dyg9bxSJubo7759KOLde6425Be",
-			totalLinks: 4,
-			downloadedLinks: 0,
-			totalBytes: 711,
-			downloadedBytes: 0,
-			speed: '240 kb/s'
-		}, {
-			name: "S02E02 LRn02noq55T85ck7K6n39dbr2ieSJhvg4325UOQbb4056k",
-			totalLinks: 4,
-			downloadedLinks: 0,
-			totalBytes: 711,
-			downloadedBytes: 0,
-			speed: '240 kb/s'
-		}],
-		packagesWaiting: 10
-	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	start: function() {
-		var self = this;
-		var dataRequest = null;
-		var dataNotification = null;
-
-		//Flag for check if module is loaded
-		this.loaded = false;
-
-		// Schedule update timer.
-		this.getData();
-		setInterval(function() {
-			self.updateDom();
-		}, this.config.updateInterval);
+		this.sendSocketNotification("MMM-MyJDownloader-StartInterval");
 	},
 	 
 	getHeader: function() {
@@ -131,7 +84,13 @@ Module.register("MMM-MyJDownloader", {
 		var self = this;
 
 		// create element wrapper for show into the module
-		var wrapper = this.getDownloadsDom()
+		if (this.downloads) {
+			return this.getDownloadsDom()
+		} else {
+			const wrapper = document.createElement('div')
+			wrapper.innerHTML = 'LAde'
+			return wrapper
+		}
 		// If this.dataRequest is not empty
 		/*if (this.dataRequest) {
 			var wrapperDataRequest = document.createElement("div");
@@ -156,7 +115,6 @@ Module.register("MMM-MyJDownloader", {
 
 			wrapper.appendChild(wrapperDataNotification);
 		}*/
-		return wrapper;
 	},
 
 	getDownloadsDom: function() {
@@ -271,9 +229,9 @@ Module.register("MMM-MyJDownloader", {
 
 	// socketNotificationReceived from helper
 	socketNotificationReceived: function (notification, payload) {
-		if(notification === "MMM-MyJDownloader-NOTIFICATION_TEST") {
+		if(notification === "MMM-MyJDownloader-DownloadData") {
 			// set dataNotification
-			this.dataNotification = payload;
+			this.downloads = payload;
 			this.updateDom();
 		}
 	},
