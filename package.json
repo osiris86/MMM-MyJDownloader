@@ -14,5 +14,8 @@
     "grunt-yamllint": "latest",
     "stylelint-config-standard": "latest",
     "time-grunt": "latest"
+  },
+  "dependencies": {
+    "jdownloader-api": "^1.1.2"
   }
 }

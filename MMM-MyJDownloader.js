@@ -9,8 +9,10 @@
 
 Module.register("MMM-MyJDownloader", {
 	defaults: {
-		updateInterval: 60000,
-		retryDelay: 5000
+		updateInterval: 30000,
+		username: '',
+		password: '',
+		id: ''
 	},
 
 
@@ -19,7 +21,9 @@ Module.register("MMM-MyJDownloader", {
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	start: function() {
-		this.sendSocketNotification("MMM-MyJDownloader-StartInterval");
+		this.sendSocketNotification("MMM-MyJDownloader-StartInterval", {
+			...this.config
+		});
 	},
 	 
 	getHeader: function() {

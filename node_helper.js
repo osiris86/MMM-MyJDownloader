@@ -5,45 +5,8 @@
  * MIT Licensed.
  */
 
-var NodeHelper = require("node_helper");
-
-
-const downloads = {
-	packagesDone: 4,
-	speed: '1.250 kb/s',
-	totalBytes: 123555,
-	downloadedBytes: 83833,
-	runningDownloads: [{
-		name: "Dexter New Blood S01E07 German DL 720p WEB h264-OHD",
-		totalLinks: 2,
-		downloadedLinks: 1,
-		totalBytes: 711,
-		downloadedBytes: 210,
-		speed: '30 kb/s'
-	}, {
-		name: "Dexter New Blood S01E08 German DL 720p WEB h264-OHD",
-		totalLinks: 2,
-		downloadedLinks: 0,
-		totalBytes: 711,
-		downloadedBytes: 10,
-		speed: '240 kb/s'
-	}, {
-		name: "S02E01 KTr94oze74Q65hj8V6l93dyg9bxSJubo7759KOLde6425Be",
-		totalLinks: 4,
-		downloadedLinks: 0,
-		totalBytes: 711,
-		downloadedBytes: 0,
-		speed: '240 kb/s'
-	}, {
-		name: "S02E02 LRn02noq55T85ck7K6n39dbr2ieSJhvg4325UOQbb4056k",
-		totalLinks: 4,
-		downloadedLinks: 0,
-		totalBytes: 711,
-		downloadedBytes: 0,
-		speed: '240 kb/s'
-	}],
-	packagesWaiting: 10
-}
+const jdownloaderAPI = require('jdownloader-api')
+const NodeHelper = require("node_helper");
 
 module.exports = NodeHelper.create({
 
@@ -55,15 +18,106 @@ module.exports = NodeHelper.create({
 	 * argument notification string - The identifier of the noitication.
 	 * argument payload mixed - The payload of the notification.
 	 */
-	socketNotificationReceived: function(notification, payload) {
-		const self = this
+	socketNotificationReceived: async function(notification, payload) {
 		if (notification === "MMM-MyJDownloader-StartInterval") {
-			console.log("Working notification system. Notification:", notification, "payload: ", payload);
-			setTimeout(function() {
-				self.sendSocketNotification('MMM-MyJDownloader-DownloadData', downloads)
-			}, 5000)
+            console.log('Setting interval')
+            this.updateData(payload);
 		}
 	},
+
+    updateData: async function(payload) {
+        console.log('Connecting...')
+        await jdownloaderAPI.connect(payload.username, payload.password)
+        const devices = await jdownloaderAPI.listDevices()
+        for (const device of devices) {
+            if (device.name === payload.name) {
+                //const packages = await jdownloaderAPI.queryPackages(device.id, '')
+                const links = await jdownloaderAPI.queryLinks(device.id)
+                console.log('Getting packages')
+                const packages = await jdownloaderAPI.queryPackages(device.id, '')
+                console.log('Start conversion')
+                const pckObj = this.convertToPackagesObject(packages)
+                const pckObjWithLinks = this.addLinkInformation(pckObj, links)
+                //console.log(singlePackage)
+                const runningDownloads = []
+                var packagesDone = 0
+                var packagesWaiting = 0
+                var totalSpeed = 0
+                var totalTotalBytes = 0
+                var totalDownloadedBytes = 0
+                for (const uuid in pckObjWithLinks) {
+                    const package = pckObjWithLinks[uuid]
+                    totalTotalBytes += package.bytesTotal
+                    totalDownloadedBytes += package.bytesLoaded
+                    var downloadedLinks = 0
+                    var speed = 0
+                    var downloadStarted = false
+                    for (const link of package.links) {
+                        if (link.bytesLoaded > 0) {
+                            downloadStarted = true
+                        }
+                        if (link.finished || link.bytesLoaded >= link.bytesTotal) {
+                            downloadedLinks++
+                        } else {
+                            speed += link.speed
+                        }
+                    }
+                    totalSpeed += speed
+                    if (package.links.length !== downloadedLinks && downloadStarted) {
+                        runningDownloads.push({
+                            name: package.name,
+                            totalLinks: package.links.length, 
+                            downloadedLinks: downloadedLinks,
+                            totalBytes: package.bytesTotal,
+                            downloadedBytes: package.bytesLoaded,
+                            speed: speed
+                        })
+                    } else if (package.links.length === downloadedLinks) {
+                        packagesDone++
+                    } else {
+                        console.log('Anzahl Links: ' + package.links.length)
+                        console.log('Downloaded Links: ' + downloadedLinks)
+                        console.log('Speed: ' + speed)
+                        packagesWaiting++
+                    }
+                }
+                const downloads = {
+                    packagesDone,
+                    speed: totalSpeed,
+                    totalBytes: totalTotalBytes,
+                    downloadedBytes: totalDownloadedBytes,
+                    runningDownloads,
+                    packagesWaiting
+                }
+
+                this.sendSocketNotification('MMM-MyJDownloader-DownloadData', downloads)
+
+                const self = this
+                setTimeout(function() {
+                    self.updateData(payload)
+                }, payload.updateInterval)
+            }
+        }
+    },
+
+    convertToPackagesObject: function(packagesArray) {
+        const pckObj = {}
+        for (const package of packagesArray.data) {
+            pckObj[package.uuid] = package
+        }
+        return pckObj
+    },
+
+    addLinkInformation: function(pckObj, links) {
+        for (const link of links.data) {
+            if (pckObj[link.packageUUID].links) {
+                pckObj[link.packageUUID].links.push(link)
+            } else {
+                pckObj[link.packageUUID].links = [link]
+            }
+        }
+        return pckObj
+    },
 
 	// Example function send notification test
 	sendNotificationTest: function(payload) {
