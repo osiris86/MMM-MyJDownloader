@@ -181,7 +181,7 @@ Module.register("MMM-MyJDownloader", {
 		}
 
 		if (totalLinks) {
-			const linksText = speed ? (downloadedLinks + '/' + totalLinks) : totalLinks
+			const linksText = downloadedLinks + '/' + totalLinks
 			const links = document.createElement('div')
 			links.innerHTML = linksText
 			links.className = 'progress-links'
@@ -237,6 +237,7 @@ Module.register("MMM-MyJDownloader", {
 			// set dataNotification
 			this.downloads = payload;
 			this.updateDom();
+			console.log(this.downloads)
 		}
 	},
 });

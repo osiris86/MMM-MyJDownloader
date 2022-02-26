@@ -64,13 +64,19 @@ module.exports = NodeHelper.create({
                     }
                     totalSpeed += speed
                     if (package.links.length !== downloadedLinks && downloadStarted) {
+                        var divider = 1000
+                        var unit = "KB/s"
+                        if (speed > 1000000) {
+                            divider = 10000
+                            unit = "MB/s"
+                        }
                         runningDownloads.push({
                             name: package.name,
                             totalLinks: package.links.length, 
                             downloadedLinks: downloadedLinks,
                             totalBytes: package.bytesTotal,
                             downloadedBytes: package.bytesLoaded,
-                            speed: speed
+                            speed: parseFloat(speed/divider).toFixed(2) + " " + unit
                         })
                     } else if (package.links.length === downloadedLinks) {
                         packagesDone++
@@ -81,9 +87,15 @@ module.exports = NodeHelper.create({
                         packagesWaiting++
                     }
                 }
+                var divider = 1000
+                var unit = "KB/s"
+                if (speed > 1000000) {
+                    divider = 10000
+                    unit = "MB/s"
+                }
                 const downloads = {
                     packagesDone,
-                    speed: totalSpeed,
+                    speed: parseFloat(totalSpeed/divider).toFixed(2) + " " + unit,
                     totalBytes: totalTotalBytes,
                     downloadedBytes: totalDownloadedBytes,
                     runningDownloads,
