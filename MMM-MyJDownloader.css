@@ -12,7 +12,6 @@
  .text {
      margin-top: 5px;
      margin-bottom: -5px;
-     font-size: smaller;
  }
 
  .progress-outer {
@@ -29,7 +28,6 @@
 
  .progress-title {
      float: left;
-     font-size: smaller;
  }
 
  .progress-percentage {
@@ -38,7 +36,6 @@
      width: 60px;
      text-align: right;
      float: right;
-     font-size: smaller;
  }
 
  .progress-links {
@@ -47,7 +44,6 @@
      width: 40px;
      text-align: right;
      float: right;
-     font-size: smaller;
  }
 
  .progress-speed {
@@ -56,7 +52,6 @@
      width: 90px;
      text-align: right;
      float: right;
-     font-size: smaller;
  }
 
  .progress-header-wrapper {

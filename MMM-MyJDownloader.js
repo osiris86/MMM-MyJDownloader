@@ -59,7 +59,7 @@ Module.register("MMM-MyJDownloader", {
 
 	createText: function(text) {
 		const wrapper = document.createElement('div')
-		wrapper.className = 'text'
+		wrapper.className = 'text xsmall'
 		wrapper.innerHTML = text
 		return wrapper
 	},
@@ -79,14 +79,14 @@ Module.register("MMM-MyJDownloader", {
 		headerWrapper.className = 'progress-header-wrapper'
 
 		let title = document.createElement('div')
-		title.className = 'progress-title'
+		title.className = 'progress-title xsmall'
 		if (titleText.length > 30) {
 			titleText = titleText.substring(0, 30) + "..."
 		}
 		title.innerHTML = titleText
 		 
 		let percentage = document.createElement('div')
-		percentage.className = 'progress-percentage'
+		percentage.className = 'progress-percentage xsmall'
 		percentage.innerHTML = parseFloat(percent).toFixed(2) + '%'
 
 		headerWrapper.appendChild(title)
@@ -95,7 +95,7 @@ Module.register("MMM-MyJDownloader", {
 		if (speed) {
 			const speedWrapper = document.createElement('div')
 			speedWrapper.innerHTML = speed
-			speedWrapper.className = 'progress-speed'
+			speedWrapper.className = 'progress-speed xsmall'
 			headerWrapper.appendChild(speedWrapper)
 		}
 
@@ -103,7 +103,7 @@ Module.register("MMM-MyJDownloader", {
 			const linksText = downloadedLinks + '/' + totalLinks
 			const links = document.createElement('div')
 			links.innerHTML = linksText
-			links.className = 'progress-links'
+			links.className = 'progress-links xsmall'
 			headerWrapper.appendChild(links)
 		}
 
