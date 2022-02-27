@@ -2,9 +2,29 @@
 
 This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
 
-Todo: Insert description here!
+The module will connect to [MyJDownloader](https://my.jdownloader.org) and show the current status of your downloads.
 
-## Using the module
+## Preview
+
+![Preview](preview.png)
+
+## Installation
+
+Go to the modules folder of your mirror
+
+```
+cd ~/Magic-Mirror/modules/
+```
+
+Clone the repositories and install the dependencies
+
+```
+git clone https://github.com/osiris86/MMM-MyJDownloader.git
+cd MMM-MyJDownloader
+npm install
+```
+
+## Configuration
 
 To use this module, add the following configuration block to the modules array in the `config/config.js` file:
 ```js
@@ -13,7 +33,9 @@ var config = {
         {
             module: 'MMM-MyJDownloader',
             config: {
-                // See below for configurable options
+                name: '',
+                username: '',
+                password: ''
             }
         }
     ]
@@ -24,5 +46,7 @@ var config = {
 
 | Option           | Description
 |----------------- |-----------
-| `option1`        | *Required* DESCRIPTION HERE
-| `option2`        | *Optional* DESCRIPTION HERE TOO <br><br>**Type:** `int`(milliseconds) <br>Default 60000 milliseconds (1 minute)
+| `name`        | *Required* The name of your JDownloader instance, login to [https://my.jdownloader.org](https://my.jdownloader.org). In there you can see the name of your MyJDownloader instance.
+| `username`        | *Required* The username that is used, to login to [https://my.jdownloader.org](https://my.jdownloader.org)
+| `password`        | *Required* The password that is used, to login to [https://my.jdownloader.org](https://my.jdownloader.org)
+| `updateInterval`        | *Optional* The interval in which the data is updated<br><br>**Type:** `int`(milliseconds) <br>Default 30000 milliseconds (30 seconds)
