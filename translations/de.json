@@ -1,0 +1,6 @@
+{
+  "LOADING": "Lade...",
+  "TOTAL": "Gesamt",
+  "FINISHED": "Abgeschlossene Pakete: ",
+  "WAITING": "{packages} weitere Pakete warten"
+}

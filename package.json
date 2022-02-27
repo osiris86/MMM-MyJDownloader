@@ -16,6 +16,6 @@
     "time-grunt": "latest"
   },
   "dependencies": {
-    "jdownloader-api": "^1.1.2"
+    "jdownloader-api": "osiris86/node-jdownloader-api"
   }
 }

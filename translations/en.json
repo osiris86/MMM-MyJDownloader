@@ -1,4 +1,6 @@
 {
-  "TITLE": "Title",
-  "UPDATE": "Update"
+  "LOADING": "Loading...",
+  "TOTAL": "Total",
+  "FINISHED": "Finished packages: ",
+  "WAITING": "{packages} more packages waiting"
 }

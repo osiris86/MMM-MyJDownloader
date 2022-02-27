@@ -12,6 +12,7 @@
  .text {
      margin-top: 5px;
      margin-bottom: -5px;
+     font-size: smaller;
  }
 
  .progress-outer {
@@ -28,6 +29,7 @@
 
  .progress-title {
      float: left;
+     font-size: smaller;
  }
 
  .progress-percentage {
