@@ -11,6 +11,7 @@ const NodeHelper = require("node_helper");
 module.exports = NodeHelper.create({
 
     startedInterval: false,
+    runningInstances: [],
 
     // Override socketNotificationReceived method.
 
@@ -22,8 +23,11 @@ module.exports = NodeHelper.create({
      */
     socketNotificationReceived: async function (notification, payload) {
         if (notification === "MMM-MyJDownloader-StartInterval") {
-            if (!this.startedInterval) {
-                this.startedInterval = true
+            if (!this.runningInstances.find(element => element.username === payload.username && element.name === payload.name)) {
+                this.runningInstances.push({
+                    name: payload.name,
+                    username: payload.username
+                })
                 this.updateData(payload);
             }
         }
